@@ -20,7 +20,10 @@ module.exports = {
     extensions: [".ts", ".js"],
   },
   output: {
-    filename: "jira.2h.js",
-    path: path.resolve(__dirname, "dist"),
+    filename: "main.js",
+    path: path.resolve(__dirname, "lib"),
+  },
+  watchOptions: {
+    ignored: /dist|lib|node_modules/,
   },
 };

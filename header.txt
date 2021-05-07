@@ -16,4 +16,5 @@
 //  <xbar.var>string(JIRA_BASE_URL="yourteam.atlassian.net"): Your specific JIRA Url.</xbar.var>
 //  <xbar.var>string(JIRA_USER_NAME=""): Your Username/Email.</xbar.var>
 //  <xbar.var>string(JIRA_API_KEY=""): Your User API Key. Generate one at https://id.atlassian.com/manage-profile/security/api-tokens</xbar.var>
+//  <xbar.var>string(JIRA_JQL=""): The JQL used to query Jira Issues. Learn more at https://confluence.atlassian.com/jira064/advanced-searching-720416661.html</xbar.var>
 
