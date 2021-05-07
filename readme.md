@@ -8,7 +8,7 @@ Copy the following into the `JIRA_JQL` setting in the plugins browser and refres
 assignee in (currentUser()) AND resolution = Unresolved
 ```
 
-![](./screenshots/jql-setting)
+![](./screenshots/jql-setting.jpg)
 
 ---
 
