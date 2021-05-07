@@ -97,3 +97,5 @@ export type Issue = {
     [key: string]: any;
   };
 };
+
+export type IssuesResponse = { issues: Issue[] };

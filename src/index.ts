@@ -1,14 +1,14 @@
 import bitbar, { BitbarOptions } from "bitbar";
-import groupBy from "lodash/groupBy";
-import fetch from "node-fetch";
+import { fetch } from "./fetch";
+import { groupBy } from "./groupBy";
+import { fetchFields, fetchIssues } from "./jira";
 
-import type { Field, Issue } from "./types";
+import type { Field, Issue, IssuesResponse } from "./types";
 
 const {
   JIRA_BASE_URL,
   JIRA_USER_NAME,
   JIRA_API_KEY,
-  JIRA_JQL,
   JIRA_GROUPBY_FIELD,
   JIRA_GROUPBY_CUSTOM_FIELD,
 } = process.env;
@@ -25,24 +25,11 @@ async function main() {
     ]);
     return;
   }
-  const Authorization = `Basic ${Buffer.from(
-    `${JIRA_USER_NAME}:${JIRA_API_KEY}`
-  ).toString("base64")}`;
 
   let error;
-  const [fields, { issues }]: [
-    Field[],
-    { issues: Issue[] }
-  ] = await Promise.all([
-    fetch(`https://${JIRA_BASE_URL}/rest/api/3/field`, {
-      headers: { Authorization },
-    }).then((response) => response.json()),
-    fetch(
-      `https://${JIRA_BASE_URL}/rest/api/3/search?jql=${encodeURIComponent(
-        JIRA_JQL
-      )}`,
-      { headers: { Authorization } }
-    ).then((response) => response.json()),
+  const [fields, { issues }]: [Field[], IssuesResponse] = await Promise.all([
+    fetchFields(),
+    fetchIssues(),
   ]).catch((e) => {
     error = e.message;
     return [[], { issues: [] }];
