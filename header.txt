@@ -1,0 +1,19 @@
+#!/usr/bin/env /usr/local/bin/node
+
+// Metadata allows your plugin to show up in the app, and website.
+//
+//  <xbar.title>Jira</xbar.title>
+//  <xbar.version>v1.0</xbar.version>
+//  <xbar.author>Matthew Jacobs</xbar.author>
+//  <xbar.author.github>codingmatty</xbar.author.github>
+//  <xbar.desc>Jira viewer.</xbar.desc>
+//  <xbar.image>http://www.hosted-somewhere/pluginimage</xbar.image>
+//  <xbar.dependencies>node</xbar.dependencies>
+//  <xbar.abouturl>http://url-to-about.com/</xbar.abouturl>
+
+// Variables become preferences in the app:
+//
+//  <xbar.var>string(JIRA_BASE_URL="yourteam.atlassian.net"): Your specific JIRA Url.</xbar.var>
+//  <xbar.var>string(JIRA_USER_NAME=""): Your Username/Email.</xbar.var>
+//  <xbar.var>string(JIRA_API_KEY=""): Your User API Key. Generate one at https://id.atlassian.com/manage-profile/security/api-tokens</xbar.var>
+
