@@ -1,7 +1,14 @@
 # xbar Jira Plugin
----
 
 **Important Note**: Due to a limitation in the default variable parsing, you'll need to set the JQL to filter by your user after installing. See [this issue](https://github.com/matryer/xbar/issues/720) on progress for a fix.
+
+Copy the following into the `JIRA_JQL` setting in the plugins browser and refresh the plugin:
+
+```
+assignee in (currentUser()) AND resolution = Unresolved
+```
+
+![](./screenshots/jql-setting)
 
 ---
 
