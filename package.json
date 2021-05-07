@@ -8,12 +8,13 @@
     "build": "webpack",
     "postbuild": "npm run finalize",
     "build:watch": "webpack -w",
+    "prefinalize": "mkdir -p dist && touch ./dist/jira.2h.js",
     "finalize": "cat header.txt lib/main.js > ./dist/jira.2h.js",
     "dev:finalize": "nodemon -w lib/main.js -x npm run finalize",
     "dev:prepare": "mkdir -p dist && touch ./dist/jira.2h.js && ln -s `pwd`/dist/jira.2h.js ~/Library/Application\\ Support/xbar/plugins/test-jira.2h.js && chmod +x ~/Library/Application\\ Support/xbar/plugins/test-jira.2h.js",
     "dev": "npm-run-all -p build:watch dev:finalize",
     "predeploy": "npm run build",
-    "deploy": "chmod +x ./dist/jira.2h.js && cp ./dist/jira.2h.js ~/Library/Application\\ Support/xbar/plugins/test-jira.2h.js"
+    "deploy": "chmod +x ./dist/jira.2h.js && cp ./dist/jira.2h.js ~/Library/Application\\ Support/xbar/plugins/jira.2h.js"
   },
   "author": "",
   "license": "ISC",
