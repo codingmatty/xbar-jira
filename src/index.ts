@@ -2,7 +2,16 @@ import bitbar, { BitbarOptions } from "bitbar";
 import groupBy from "lodash/groupBy";
 import fetch from "node-fetch";
 
-const { JIRA_BASE_URL, JIRA_USER_NAME, JIRA_API_KEY, JIRA_JQL } = process.env;
+import type { Field, Issue } from "./types";
+
+const {
+  JIRA_BASE_URL,
+  JIRA_USER_NAME,
+  JIRA_API_KEY,
+  JIRA_JQL,
+  JIRA_GROUPBY_FIELD,
+  JIRA_GROUPBY_CUSTOM_FIELD,
+} = process.env;
 
 async function main() {
   if (
@@ -21,7 +30,10 @@ async function main() {
   ).toString("base64")}`;
 
   let error;
-  const [fields, { issues }] = await Promise.all([
+  const [fields, { issues }]: [
+    Field[],
+    { issues: Issue[] }
+  ] = await Promise.all([
     fetch(`https://${JIRA_BASE_URL}/rest/api/3/field`, {
       headers: { Authorization },
     }).then((response) => response.json()),
@@ -33,12 +45,35 @@ async function main() {
     ).then((response) => response.json()),
   ]).catch((e) => {
     error = e.message;
-    return [];
+    return [[], { issues: [] }];
   });
 
+  let groupedByKey = JIRA_GROUPBY_FIELD;
+  let groupedByLabel = JIRA_GROUPBY_FIELD;
+  if (JIRA_GROUPBY_FIELD === "custom") {
+    const customField = fields.find(
+      ({ name }) =>
+        name.toLowerCase() === JIRA_GROUPBY_CUSTOM_FIELD?.toLowerCase()
+    );
+    groupedByKey = customField?.key;
+    groupedByLabel = customField?.name;
+  }
+
+  const sprintField = fields.find(
+    ({ name }) => name.toLowerCase() === "sprint"
+  );
+  // If a sprint field exists, attempt to filter issues from the active sprint
+  const issuesInActiveSprint = sprintField
+    ? issues.filter((issue: any) =>
+        issue.fields[sprintField.key]?.some(
+          ({ state }: any) => state === "active"
+        )
+      )
+    : issues;
+
   const groupedIssues = groupBy(
-    issues,
-    (issue) => issue.fields.status.name
+    issuesInActiveSprint,
+    (issue) => issue.fields[groupedByKey]?.name
   );
 
   if (error) {
@@ -59,19 +94,21 @@ async function main() {
         dropdown: false,
       },
       bitbar.separator,
+      `Grouped By: ${groupedByLabel ?? "No Valid Grouping Applied"}`,
+      bitbar.separator,
       ...Object.keys(groupedIssues).reduce(
-        (result, groupKey): BitbarOptions[] => {
+        (result, groupKey, i, array): BitbarOptions[] => {
           const group = groupedIssues[groupKey];
           return [
             ...result,
-            {
-              text: groupKey,
-            },
+            array.length === 1 && groupKey === "undefined"
+              ? null
+              : { text: groupKey },
             ...group.map(({ key, fields }: any) => ({
-              text: `   ${key}: ${fields.summary}`,
+              text: `•\t${key}: ${fields.summary}`,
               href: `https:${JIRA_BASE_URL}/browse/${key}`,
             })),
-          ];
+          ].filter(Boolean);
         },
         []
       ),
